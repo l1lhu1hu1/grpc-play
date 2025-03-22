@@ -1,29 +1,20 @@
-import { loadPackageDefinition } from "@grpc/grpc-js";
 import { credentials } from "@grpc/grpc-js";
-import { loadSync } from "@grpc/proto-loader";
-import path from "path";
+import { QuestionServiceClient } from "../generated/question_grpc_pb";
+import { GetQuestionRequest, GetQuestionResponse } from "../generated/question_pb";
 
-const questionDef = loadSync(path.join(process.cwd(), "../proto/question.proto"), {
-  keepCase: true,
-  longs: String,
-  enums: String,
-  defaults: true,
-  oneofs: true,
-});
+export async function fetchQuestion(): Promise<GetQuestionResponse.AsObject> {
+  return new Promise((resolve, reject) => {
+    const request = new GetQuestionRequest();
+    request.setId("q-1");
 
-
-const questionProto = loadPackageDefinition(questionDef) as any;
-
-const questionClient = new questionProto.question.QuestionService(
-  "localhost:50051",
-  credentials.createInsecure()
-);
-
-export async function fetchQuestion() {
-  return new Promise<{ id: string; title: string; author: string }>((resolve, reject) => {
-    questionClient.GetQuestion({ id: "123" }, (err: any, response: any) => {
-      if (err) reject(err);
-      else resolve(response);
+    const client = new QuestionServiceClient("localhost:50051", credentials.createInsecure());
+    client.getQuestion(request, (err, response) => {
+      if (err) {
+        console.error("gRPC error:", err);
+        reject(err);
+      } else {
+        resolve(response.toObject());
+      }
     });
   });
 }

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "next dev"
+    "dev": "next dev",
+    "proto:gen": "rm -rf src/generated && mkdir -p src/generated && grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./src/generated --grpc_out=grpc_js:./src/generated --ts_out=grpc_js:./src/generated -I ../proto ../proto/*.proto"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,8 @@
   "devDependencies": {
     "@types/node": "^22.13.11",
     "@types/react": "^19.0.12",
+    "grpc_tools_node_protoc_ts": "^5.3.3",
+    "grpc-tools": "^1.13.0",
     "typescript": "^5.8.2"
   }
 }
