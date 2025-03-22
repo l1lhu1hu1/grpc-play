@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package question;
+
+service QuestionService {
+  rpc GetQuestion (GetQuestionRequest) returns (GetQuestionResponse);
+}
+
+message GetQuestionRequest {
+  string id = 1;
+}
+
+message GetQuestionResponse {
+  string id = 1;
+  string title = 2;
+  string author = 3;
+}

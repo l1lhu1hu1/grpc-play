@@ -13,4 +13,5 @@ message GetUserRequest {
 message GetUserResponse {
   string id = 1;
   string name = 2;
+  uint32 age = 3;
 }
