@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev server.ts"
+    "dev": "ts-node-dev server.ts",
+    "proto:gen": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./generated --grpc_out=grpc_js:./generated --ts_out=grpc_js:./generated -I ../proto ../proto/*.proto"
+
   },
   "keywords": [],
   "author": "",
@@ -15,5 +17,9 @@
     "@grpc/proto-loader": "^0.7.13",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "grpc_tools_node_protoc_ts": "^5.3.3",
+    "grpc-tools": "^1.13.0"
   }
 }
