@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev server.ts",
-    "proto:gen": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./generated --grpc_out=grpc_js:./generated --ts_out=grpc_js:./generated -I ../proto ../proto/*.proto"
+    "dev": "ts-node-dev src/server.ts",
+    "proto:gen": "rm -rf src/generated && mkdir -p src/generated && grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./src/generated --grpc_out=grpc_js:./src/generated --ts_out=grpc_js:./src/generated -I ../proto ../proto/*.proto"
 
   },
   "keywords": [],
