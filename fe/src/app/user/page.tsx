@@ -5,7 +5,7 @@ import QuestionForm from '../../components/QuestionForm';
 export default async function Page() {
   const user = await fetchUser();
   const question = await fetchQuestion();
-  const questions = await fetchQuestions(5);
+  const questions = await fetchQuestions(10);
 
   return (
     <div>

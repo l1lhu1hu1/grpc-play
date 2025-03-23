@@ -28,7 +28,6 @@ export default function QuestionForm() {
         setMessage('Question created successfully!');
         setTitle('');
         setAuthor('');
-        // Refresh the page to show the new question
         window.location.reload();
       } else {
         setMessage(`Failed to create question: ${data.error || 'Unknown error'}`);
