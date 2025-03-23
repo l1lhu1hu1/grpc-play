@@ -4,6 +4,25 @@ package question;
 
 service QuestionService {
   rpc GetQuestion (GetQuestionRequest) returns (GetQuestionResponse);
+  rpc GetQuestions (GetQuestionsRequest) returns (GetQuestionsResponse);
+  rpc CreateQuestion (CreateQuestionRequest) returns (CreateQuestionResponse);
+}
+
+message GetQuestionsRequest {
+  int32 limit = 1;
+}
+
+message GetQuestionsResponse {
+  repeated GetQuestionResponse questions = 1;
+}
+
+message CreateQuestionRequest {
+  string title = 1;
+  string author = 2;
+}
+
+message CreateQuestionResponse {
+  bool success = 1;
 }
 
 message GetQuestionRequest {
