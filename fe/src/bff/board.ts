@@ -2,28 +2,11 @@ import { credentials } from "@grpc/grpc-js";
 import { BoardServiceClient } from "../generated/board_grpc_pb";
 import {
   CreateMessageRequest,
-  GetMessagesRequest,
   MessageResponse,
   StreamMessagesRequest
 } from "../generated/board_pb";
 
 const client = new BoardServiceClient("localhost:50051", credentials.createInsecure());
-
-export async function fetchMessages(limit: number = 100): Promise<MessageResponse.AsObject[]> {
-  return new Promise((resolve, reject) => {
-    const request = new GetMessagesRequest();
-    request.setLimit(limit);
-
-    client.getMessages(request, (err, response) => {
-      if (err) {
-        console.error("gRPC error:", err);
-        reject(err);
-      } else {
-        resolve(response.getMessagesList().map(message => message.toObject()));
-      }
-    });
-  });
-}
 
 export async function createMessage(content: string, author: string): Promise<{ success: boolean, message?: MessageResponse.AsObject }> {
   return new Promise((resolve, reject) => {

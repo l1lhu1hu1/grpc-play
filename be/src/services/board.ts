@@ -3,18 +3,11 @@ import { IBoardServiceServer } from "../generated/board_grpc_pb";
 import {
   CreateMessageRequest,
   CreateMessageResponse,
-  GetMessagesRequest,
-  GetMessagesResponse,
   MessageResponse,
   StreamMessagesRequest
 } from "../generated/board_pb";
 
-const boardMessages: {
-  id: string;
-  content: string;
-  author: string;
-  timestamp: string;
-}[] = [
+const boardMessages = [
     {
       id: "m-1",
       content: "Welcome to the message board!",
@@ -31,7 +24,7 @@ const boardMessages: {
 
 const activeStreams: ServerWritableStream<StreamMessagesRequest, MessageResponse>[] = [];
 
-function createMessageResponse(message: typeof boardMessages[0]): MessageResponse {
+function createMessageResponse(message: MessageResponse.AsObject): MessageResponse {
   const response = new MessageResponse();
   response.setId(message.id);
   response.setContent(message.content);
@@ -58,24 +51,6 @@ function broadcastMessage(message: MessageResponse): void {
 }
 
 export const boardService: IBoardServiceServer = {
-  getMessages(call: ServerUnaryCall<GetMessagesRequest, GetMessagesResponse>, callback: sendUnaryData<GetMessagesResponse>) {
-    try {
-      const limit = call.request.getLimit() || 100;
-      const response = new GetMessagesResponse();
-
-      const messages = boardMessages.slice(-limit);
-
-      messages.forEach(message => {
-        response.addMessages(createMessageResponse(message));
-      });
-
-      callback(null, response);
-    } catch (error) {
-      console.error("Error getting messages:", error);
-      callback(new Error("Failed to get messages"), null);
-    }
-  },
-
   createMessage(call: ServerUnaryCall<CreateMessageRequest, CreateMessageResponse>, callback: sendUnaryData<CreateMessageResponse>) {
     try {
       const content = call.request.getContent();

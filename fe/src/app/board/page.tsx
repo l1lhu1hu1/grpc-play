@@ -29,10 +29,9 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const eventSource = new EventSource('/api/board/stream?limit=100');
+      const eventSource = new EventSource('/api/board?limit=100');
 
       eventSource.onmessage = (event) => {
-        console.log('1111111111111111111')
         try {
           const message = JSON.parse(event.data);
 
@@ -56,7 +55,6 @@ export default function Page() {
       };
 
       eventSource.onopen = () => {
-        console.log('###################')
         console.log('SSE connection opened');
       };
 
