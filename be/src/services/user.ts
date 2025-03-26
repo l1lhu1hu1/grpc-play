@@ -1,13 +1,13 @@
 import { sendUnaryData, ServerUnaryCall } from "@grpc/grpc-js";
-import { IUserServiceServer } from "../generated/user_grpc_pb";
-import { GetUserRequest, GetUserResponse } from "../generated/user_pb";
+import { UserServiceServer, GetUserRequest, GetUserResponse } from "../generated/user";
 
-export const userService: IUserServiceServer = {
+export const userService: UserServiceServer = {
   getUser(call: ServerUnaryCall<GetUserRequest, GetUserResponse>, callback: sendUnaryData<GetUserResponse>) {
-    const response = new GetUserResponse();
-    response.setId(call.request.getId());
-    response.setName("Taro");
-    response.setAge(40);
+    const response: GetUserResponse = {
+      id: call.request.id,
+      name: 'Taro',
+      age: 40
+    }
     callback(null, response);
   },
 };
