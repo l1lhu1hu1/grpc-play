@@ -1,7 +1,7 @@
 import { Server, ServerCredentials } from "@grpc/grpc-js";
-import { UserServiceService } from "./generated/user_grpc_pb";
-import { QuestionServiceService } from "./generated/question_grpc_pb";
-import { BoardServiceService } from "./generated/board_grpc_pb";
+import { UserServiceService } from "./generated/user";
+import { QuestionServiceService } from "./generated/question";
+import { BoardServiceService } from "./generated/board";
 import { userService } from './services/user'
 import { questionService } from './services/question'
 import { boardService } from './services/board'

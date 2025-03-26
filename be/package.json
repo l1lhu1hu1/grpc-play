@@ -6,20 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev src/server.ts",
-    "proto:gen": "rm -rf src/generated && mkdir -p src/generated && grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./src/generated --grpc_out=grpc_js:./src/generated --ts_out=grpc_js:./src/generated -I ../proto ../proto/*.proto"
-
+    "proto:gen": "rm -rf src/generated && mkdir -p src/generated && protoc --plugin=protoc-gen-ts_proto=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/generated --ts_proto_opt=env=true,esModuleInterop=true,outputServices=grpc-js -I ../proto ../proto/*.proto"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@grpc/grpc-js": "^1.13.1",
-    "@grpc/proto-loader": "^0.7.13",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.8.2"
+    "@grpc/grpc-js": "^1.13.1"
   },
   "devDependencies": {
-    "grpc_tools_node_protoc_ts": "^5.3.3",
-    "grpc-tools": "^1.13.0"
+    "grpc-tools": "^1.13.0",
+    "ts-node-dev": "^2.0.0",
+    "ts-proto": "^2.7.0",
+    "typescript": "^5.8.2"
   }
 }

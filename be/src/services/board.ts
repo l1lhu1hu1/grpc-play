@@ -1,11 +1,11 @@
 import { sendUnaryData, ServerUnaryCall, ServerWritableStream } from "@grpc/grpc-js";
-import { IBoardServiceServer } from "../generated/board_grpc_pb";
 import {
+  BoardServiceServer,
   CreateMessageRequest,
   CreateMessageResponse,
   MessageResponse,
   StreamMessagesRequest
-} from "../generated/board_pb";
+} from "../generated/board";
 
 const boardMessages = [
     {
@@ -24,12 +24,13 @@ const boardMessages = [
 
 const activeStreams: ServerWritableStream<StreamMessagesRequest, MessageResponse>[] = [];
 
-function createMessageResponse(message: MessageResponse.AsObject): MessageResponse {
-  const response = new MessageResponse();
-  response.setId(message.id);
-  response.setContent(message.content);
-  response.setAuthor(message.author);
-  response.setTimestamp(message.timestamp);
+function createMessageResponse(message: MessageResponse): MessageResponse {
+  const response: MessageResponse = {
+    id: message.id,
+    content: message.content,
+    author: message.author,
+    timestamp: message.timestamp
+  }
   return response;
 }
 
@@ -50,11 +51,11 @@ function broadcastMessage(message: MessageResponse): void {
   });
 }
 
-export const boardService: IBoardServiceServer = {
+export const boardService: BoardServiceServer = {
   createMessage(call: ServerUnaryCall<CreateMessageRequest, CreateMessageResponse>, callback: sendUnaryData<CreateMessageResponse>) {
     try {
-      const content = call.request.getContent();
-      const author = call.request.getAuthor();
+      const content = call.request.content
+      const author = call.request.author
 
       const newMessage = {
         id: `m-${boardMessages.length + 1}`,
@@ -65,26 +66,27 @@ export const boardService: IBoardServiceServer = {
 
       boardMessages.push(newMessage);
 
-      const response = new CreateMessageResponse();
       const messageResponse = createMessageResponse(newMessage);
-
-      response.setSuccess(true);
-      response.setMessage(messageResponse);
-
+      const response: CreateMessageResponse = {
+        success: true,
+        message: messageResponse
+      }
       broadcastMessage(messageResponse);
 
       callback(null, response);
     } catch (error) {
       console.error("Error creating message:", error);
-      const response = new CreateMessageResponse();
-      response.setSuccess(false);
+      const response: CreateMessageResponse = {
+        success: false,
+        message: undefined
+      }
       callback(null, response);
     }
   },
 
   streamMessages(call: ServerWritableStream<StreamMessagesRequest, MessageResponse>) {
     try {
-      const limit = call.request.getLimit() || 10;
+      const limit = call.request.limit || 10;
 
       const recentMessages = boardMessages.slice(-limit);
 
