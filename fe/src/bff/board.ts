@@ -1,27 +1,26 @@
 import { credentials } from "@grpc/grpc-js";
-import { BoardServiceClient } from "../generated/board_grpc_pb";
 import {
+  BoardServiceClient,
   CreateMessageRequest,
   MessageResponse,
   StreamMessagesRequest
-} from "../generated/board_pb";
+} from "../generated/board";
 
 const client = new BoardServiceClient("localhost:50051", credentials.createInsecure());
 
-export async function createMessage(content: string, author: string): Promise<{ success: boolean, message?: MessageResponse.AsObject }> {
+export async function createMessage(content: string, author: string): Promise<{ success: boolean, message?: MessageResponse}> {
   return new Promise((resolve, reject) => {
-    const request = new CreateMessageRequest();
-    request.setContent(content);
-    request.setAuthor(author);
+    const request: CreateMessageRequest = {
+      content,
+      author
+    }
 
     client.createMessage(request, (err, response) => {
       if (err) {
         console.error("gRPC error:", err);
         reject(err);
       } else {
-        const success = response.getSuccess();
-        const message = response.getMessage()?.toObject();
-        resolve({ success, message });
+        resolve({ success: response.success, message: response.message });
       }
     });
   });
@@ -29,16 +28,16 @@ export async function createMessage(content: string, author: string): Promise<{ 
 
 export function streamMessages(
   limit: number = 10,
-  onMessage: (message: MessageResponse.AsObject) => void,
+  onMessage: (message: MessageResponse) => void,
   onError: (error: Error) => void
 ): () => void {
-  const request = new StreamMessagesRequest();
-  request.setLimit(limit);
+  const request: StreamMessagesRequest = {
+    limit
+  }
 
   const stream = client.streamMessages(request);
-
   stream.on('data', (response: MessageResponse) => {
-    onMessage(response.toObject());
+    onMessage(response);
   });
 
   stream.on('error', (err: Error) => {

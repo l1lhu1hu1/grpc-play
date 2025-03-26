@@ -1,36 +1,34 @@
 import { credentials } from "@grpc/grpc-js";
-import { QuestionServiceClient } from "../generated/question_grpc_pb";
-import { CreateQuestionRequest, CreateQuestionResponse, GetQuestionRequest, GetQuestionResponse, GetQuestionsRequest, GetQuestionsResponse } from "../generated/question_pb";
+import { QuestionServiceClient, CreateQuestionRequest, GetQuestionRequest, GetQuestionResponse, GetQuestionsRequest } from "../generated/question";
 
-export async function fetchQuestion(): Promise<GetQuestionResponse.AsObject> {
+const client = new QuestionServiceClient("localhost:50051", credentials.createInsecure());
+
+export async function fetchQuestion(): Promise<GetQuestionResponse> {
   return new Promise((resolve, reject) => {
-    const request = new GetQuestionRequest();
-    request.setId("q-1");
+    const request: GetQuestionRequest = {
+      id: 'q-1'
+    }
 
-    const client = new QuestionServiceClient("localhost:50051", credentials.createInsecure());
     client.getQuestion(request, (err, response) => {
       if (err) {
         console.error("gRPC error:", err);
         reject(err);
       } else {
-        resolve(response.toObject());
+        resolve(response);
       }
     });
   });
 }
 
-export async function fetchQuestions(limit: number = 10): Promise<GetQuestionResponse.AsObject[]> {
+export async function fetchQuestions(limit: number = 10): Promise<Array<GetQuestionResponse>> {
   return new Promise((resolve, reject) => {
-    const request = new GetQuestionsRequest();
-    request.setLimit(limit);
-
-    const client = new QuestionServiceClient("localhost:50051", credentials.createInsecure());
+    const request: GetQuestionsRequest = { limit };
     client.getQuestions(request, (err, response) => {
-      if (err) {
+      if (err || !response) {
         console.error("gRPC error:", err);
         reject(err);
       } else {
-        resolve(response.getQuestionsList().map(question => question.toObject()));
+        resolve(response.questions);
       }
     });
   });
@@ -38,17 +36,17 @@ export async function fetchQuestions(limit: number = 10): Promise<GetQuestionRes
 
 export async function createQuestion(title: string, author: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    const request = new CreateQuestionRequest();
-    request.setTitle(title);
-    request.setAuthor(author);
+    const request: CreateQuestionRequest = {
+      title,
+      author
+    }
 
-    const client = new QuestionServiceClient("localhost:50051", credentials.createInsecure());
     client.createQuestion(request, (err, response) => {
       if (err) {
         console.error("gRPC error:", err);
         reject(err);
       } else {
-        resolve(response.getSuccess());
+        resolve(response.success);
       }
     });
   });

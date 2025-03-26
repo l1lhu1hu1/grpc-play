@@ -1,19 +1,20 @@
 import { credentials } from "@grpc/grpc-js";
-import { UserServiceClient } from "../generated/user_grpc_pb";
-import { GetUserRequest, GetUserResponse } from "../generated/user_pb";
+import { UserServiceClient, GetUserRequest, GetUserResponse } from "../generated/user";
 
-export async function fetchUser(): Promise<GetUserResponse.AsObject> {
+const client = new UserServiceClient("localhost:50051", credentials.createInsecure());
+
+export async function fetchUser(): Promise<GetUserResponse> {
   return new Promise((resolve, reject) => {
-    const request = new GetUserRequest();
-    request.setId("123");
+    const request: GetUserRequest = {
+      id: '123'
+    }
 
-    const client = new UserServiceClient("localhost:50051", credentials.createInsecure());
     client.getUser(request, (err, response) => {
       if (err) {
         console.error("gRPC error:", err);
         reject(err);
       } else {
-        resolve(response.toObject());
+        resolve(response);
       }
     });
   });
